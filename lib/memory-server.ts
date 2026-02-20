@@ -9,7 +9,9 @@ function getMemoryPath(): string {
 }
 
 export async function loadMemoryFromFile(): Promise<Memory> {
-  const filePath = getMemoryPath();
+  const filePath = process.env.VERCEL
+    ? path.join("/tmp", "memory.json")
+    : getMemoryPath();
   try {
     const content = await readFile(filePath, "utf-8");
     const parsed = JSON.parse(content) as Memory;
@@ -25,8 +27,14 @@ export async function loadMemoryFromFile(): Promise<Memory> {
 }
 
 export async function saveMemoryToFile(memory: Memory): Promise<void> {
-  const filePath = getMemoryPath();
-  const dir = path.dirname(filePath);
-  await mkdir(dir, { recursive: true });
-  await writeFile(filePath, JSON.stringify(memory, null, 2), "utf-8");
+  try {
+    const filePath = process.env.VERCEL
+      ? path.join("/tmp", "memory.json")
+      : getMemoryPath();
+    const dir = path.dirname(filePath);
+    await mkdir(dir, { recursive: true });
+    await writeFile(filePath, JSON.stringify(memory, null, 2), "utf-8");
+  } catch (e) {
+    console.warn("Could not save memory to file:", e);
+  }
 }

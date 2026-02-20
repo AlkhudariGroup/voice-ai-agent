@@ -2,9 +2,9 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Voice AI Agent",
-    short_name: "Voice AI",
-    description: "Production-ready PWA Voice AI Agent",
+    name: "E-Commerce Voice AI",
+    short_name: "E-Commerce",
+    description: "Voice AI assistant for e-commerce stores",
     start_url: "/",
     display: "standalone",
     display_override: ["standalone", "fullscreen"],
@@ -22,6 +22,12 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
+      },
+      {
+        src: "/logo.png",
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
       },
     ],
   };

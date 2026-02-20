@@ -2,8 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Voice AI Agent",
-  description: "Production-ready PWA Voice AI Agent",
+  title: "E-Commerce Voice AI",
+  description: "Voice AI assistant for e-commerce stores",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
