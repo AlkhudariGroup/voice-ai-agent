@@ -5,12 +5,10 @@ import { VoiceAvatar } from "@/components/VoiceAvatar";
 import { VideoAvatar } from "@/components/VideoAvatar";
 import { ConversationBubble } from "@/components/ConversationBubble";
 import { InstallPrompt } from "@/components/InstallPrompt";
-import { FileUpload } from "@/components/FileUpload";
 import { loadMemoryFromStorage, saveMemoryToStorage } from "@/lib/memory-client";
 import { getSpeechRecognition, speak, stopSpeaking } from "@/lib/voice";
 import type { Memory, Message } from "@/lib/types";
 
-const LOGO_PATTERNS = ["solid", "ring", "glow"] as const;
 const AVATAR_VIDEO =
   process.env.NEXT_PUBLIC_AVATAR_VIDEO_URL ?? "/avatar-video.mp4";
 
@@ -21,8 +19,8 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [memory, setMemory] = useState<Memory>(() => loadMemoryFromStorage());
-  const [uploadedImage, setUploadedImage] = useState<{ url: string; file: File } | null>(null);
-  const [logoPattern, setLogoPattern] = useState<(typeof LOGO_PATTERNS)[number]>("solid");
+  const [uploadedImage] = useState<{ url: string; file: File } | null>(null);
+  const [logoPattern] = useState<"solid" | "ring" | "glow">("solid");
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -95,15 +93,17 @@ export default function Home() {
         memory,
       };
       if (uploadedImage?.url) body.imageUrl = uploadedImage.url;
-      setUploadedImage(null);
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000);
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
 
-      if (!res.ok) throw new Error("API error");
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
       const { reply, updatedMemory } = data;
 
@@ -122,9 +122,13 @@ export default function Home() {
         onEnd: () => setIsSpeaking(false),
       });
     } catch (e) {
+      const msg = e instanceof Error ? e.message : "Network error. Check connection and try again.";
+      const isNetwork = msg.includes("abort") || msg.includes("fetch") || msg.includes("Network");
       const errMsg: Message = {
         role: "assistant",
-        content: "Sorry, I couldn't process that. Please try again.",
+        content: isNetwork
+          ? "Connection took too long or failed. Please try again."
+          : `Sorry: ${msg}`,
         timestamp: new Date().toISOString(),
       };
       setMessages((m) => [...m, errMsg]);
@@ -186,41 +190,6 @@ export default function Home() {
         >
           ×
         </button>
-
-        {/* Upload photo - PWA friendly */}
-        <div
-          className="absolute bottom-24 left-1/2 z-40 -translate-x-1/2 flex flex-col items-center gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <FileUpload onUpload={(url, file) => setUploadedImage({ url, file })} />
-          {uploadedImage && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setUploadedImage(null); }}
-              className="text-xs text-yellow-400 underline"
-            >
-              Remove photo
-            </button>
-          )}
-          <p className="text-xs text-white/70">Tap to add photo, then speak</p>
-        </div>
-        <div
-          className="absolute left-4 top-4 z-40 flex flex-col gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex gap-1">
-            {LOGO_PATTERNS.map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setLogoPattern(p); }}
-                className={`rounded px-2 py-1 text-xs capitalize ${logoPattern === p ? "bg-yellow-500/30 text-yellow-400" : "bg-white/5 text-gray-500"}`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Transcript - bottom area */}
         <div className="mt-auto p-4">

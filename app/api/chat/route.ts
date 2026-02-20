@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const maxDuration = 60;
 import { chatWithLLM } from "@/lib/llm";
 import { loadMemoryFromFile, saveMemoryToFile } from "@/lib/memory-server";
 import { Memory } from "@/lib/types";

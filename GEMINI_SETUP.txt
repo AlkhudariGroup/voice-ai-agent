@@ -1,0 +1,9 @@
+Use Google Gemini (free tier) instead of OpenAI:
+
+1. Get free API key: https://aistudio.google.com/apikey
+2. Add to .env.local:
+   USE_GEMINI=true
+   GEMINI_API_KEY=your-key-here
+3. Restart: npm run dev
+
+Done! The app will use Gemini when both are set.
