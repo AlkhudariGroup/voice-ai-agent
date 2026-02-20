@@ -1,0 +1,13 @@
+VIDEO AVATAR - How to use your video
+
+1. Add your video file to: public/avatar-video.mp4
+   - Or set NEXT_PUBLIC_AVATAR_VIDEO_URL in .env.local to your video URL
+
+2. Video behavior:
+   - PLAYS & LOOPS when: you talk (listening) OR agent speaks (TTS)
+   - PAUSES when: both you and agent are silent
+
+3. Video format: MP4 or WebM, short looping clip recommended
+   - Muted (no audio) - required for autoplay in browsers
+
+4. If video fails to load: falls back to "e" logo automatically

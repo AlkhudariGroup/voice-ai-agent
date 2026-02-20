@@ -1,0 +1,9 @@
+VOICE AI - QUICK SETUP (when you feel better)
+
+1. Open .env.local
+2. Replace line 1: change "sk-your-openai-api-key" to your real OpenAI key
+   Get one at: https://platform.openai.com/api-keys
+3. Run: npm run dev
+4. Open: http://localhost:3000
+
+That's it. Rest well.

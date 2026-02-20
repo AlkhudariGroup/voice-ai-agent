@@ -1,0 +1,10 @@
+To try the app locally with OpenAI:
+
+1. Get your key: https://platform.openai.com/api-keys
+2. Open .env.local
+3. Replace "sk-your-openai-api-key" on line 1 with your real key
+4. Save
+5. Run: npm run dev
+6. Open: http://localhost:3000
+
+Done.
