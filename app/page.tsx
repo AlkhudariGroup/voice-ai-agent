@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { VideoAvatar } from "@/components/VideoAvatar";
-import { FileUpload } from "@/components/FileUpload";
+
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { loadMemoryFromStorage, saveMemoryToStorage } from "@/lib/memory-client";
 import { getSpeechRecognition, speak, stopSpeaking } from "@/lib/voice";
@@ -247,37 +247,9 @@ function HomeContent() {
         onKeyDown={(e) => e.key === "Enter" && handleAvatarClick()}
         aria-label="Tap to speak"
       >
-        {/* Logo pattern: Solid, Ring, Glow */}
-        <div className="absolute left-4 top-4 z-40 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
-          <div className="flex gap-1">
-            {(["solid", "ring", "glow"] as const).map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => setLogoPattern(p)}
-                className={`rounded px-2 py-1 text-xs capitalize ${logoPattern === p ? "bg-yellow-500/30 text-yellow-400" : "bg-white/5 text-gray-500"}`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
-        {/* X close button */}
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); window.close?.(); }}
-          className="absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-2xl text-white backdrop-blur"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
         {/* Voice only - no text on screen. Hidden status for accessibility */}
         <div className="mt-auto p-4">
-          <div className="mb-3 flex justify-center" onClick={(e) => e.stopPropagation()}>
-            <FileUpload onUpload={(url, file) => setUploadedImage({ url, file })} />
-          </div>
-          <div className="flex items-center justify-center gap-2 min-h-[2rem]">
+<div className="flex items-center justify-center gap-2 min-h-[2rem]">
             <span
               className={`h-3 w-3 rounded-full transition ${isListening ? "animate-pulse bg-green-500" : isProcessing ? "bg-yellow-500" : "bg-white/30"}`}
               aria-hidden
