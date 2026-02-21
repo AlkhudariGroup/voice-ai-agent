@@ -6,7 +6,7 @@ import { VideoAvatar } from "@/components/VideoAvatar";
 
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { loadMemoryFromStorage, saveMemoryToStorage } from "@/lib/memory-client";
-import { getSpeechRecognition, speak, stopSpeaking } from "@/lib/voice";
+import { getSpeechRecognition, getSpeechRecognitionLang, speak, stopSpeaking } from "@/lib/voice";
 import type { Memory, Message } from "@/lib/types";
 
 const AVATAR_VIDEO =
@@ -130,7 +130,7 @@ function HomeContent() {
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = true;
-    rec.lang = "en-US"; // English - use ar-SA for Arabic only
+    rec.lang = getSpeechRecognitionLang(); // Auto-detect: uses browser language (Arabic, English, French, Spanish, etc.)
 
     rec.onresult = (e: { results: SpeechRecognitionResultList }) => {
       lastActivityRef.current = Date.now();

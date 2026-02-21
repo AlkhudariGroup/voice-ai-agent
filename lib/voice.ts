@@ -14,6 +14,20 @@ export function getSpeechRecognition(): (new () => SpeechRecognition) | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
+/** Get best speech recognition language from browser - supports any language/accent */
+export function getSpeechRecognitionLang(): string {
+  if (typeof window === "undefined") return "en-US";
+  const lang = navigator.language || (navigator.languages && navigator.languages[0]) || "en-US";
+  const base = lang.split("-")[0].toLowerCase();
+  const map: Record<string, string> = {
+    en: "en-US", ar: "ar-SA", fr: "fr-FR", es: "es-ES", de: "de-DE",
+    hi: "hi-IN", pt: "pt-BR", ru: "ru-RU", zh: "zh-CN", ja: "ja-JP",
+    ko: "ko-KR", it: "it-IT", nl: "nl-NL", tr: "tr-TR", pl: "pl-PL",
+    th: "th-TH", vi: "vi-VN", id: "id-ID", ms: "ms-MY",
+  };
+  return map[base] || lang || "en-US";
+}
+
 export function speak(
   text: string,
   callbacks?: { onStart?: () => void; onEnd?: () => void },

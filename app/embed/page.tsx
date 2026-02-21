@@ -6,7 +6,7 @@ import { VideoAvatar } from "@/components/VideoAvatar";
 import { VoiceConsentModal, getUserId, hasVoiceConsent } from "@/components/VoiceConsentModal";
 import { VoiceRecorder } from "@/lib/voice-recorder";
 import { loadMemoryFromStorage, saveMemoryToStorage } from "@/lib/memory-client";
-import { getSpeechRecognition, speak, stopSpeaking } from "@/lib/voice";
+import { getSpeechRecognition, getSpeechRecognitionLang, speak, stopSpeaking } from "@/lib/voice";
 import type { Memory, Message } from "@/lib/types";
 
 const AVATAR_VIDEO =
@@ -87,7 +87,7 @@ function EmbedContent() {
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = true;
-    rec.lang = "en-US";
+    const langMap: Record<string, string> = { ar: "ar-SA", en: "en-US" }; rec.lang = voiceOptions.primaryLanguage ? langMap[voiceOptions.primaryLanguage] || getSpeechRecognitionLang() : getSpeechRecognitionLang();
     rec.onresult = (e: { resultIndex: number; results: SpeechRecognitionResultList }) => {
       let final = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -105,7 +105,7 @@ function EmbedContent() {
     setTranscript("");
     rec.start();
     setIsListening(true);
-  }, [agentId, voiceRecordingEnabled, uploadRecording]);
+  }, [agentId, voiceRecordingEnabled, uploadRecording, voiceOptions]);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
