@@ -31,16 +31,25 @@ export function VideoAvatar({
   return (
     <div className="fixed inset-0 bg-[#0a0a0a]">
       {!videoError && (
-        <video
-          ref={videoRef}
-          src={src}
-          loop
-          muted
-          playsInline
-          autoPlay
-          onError={() => setVideoError(true)}
-          className="fixed inset-0 h-full w-full object-cover"
-        />
+        <>
+          <video
+            ref={videoRef}
+            src={src}
+            loop
+            muted
+            playsInline
+            autoPlay
+            onError={() => setVideoError(true)}
+            className="fixed inset-0 h-full w-full object-cover"
+          />
+          {/* Dimmer - dark when AI not talking, bright when talking */}
+          <div
+            className={`fixed inset-0 bg-black pointer-events-none transition-opacity duration-500 ${
+              isTalking ? "opacity-0" : "opacity-50"
+            }`}
+            aria-hidden
+          />
+        </>
       )}
       {videoError && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a0a]">
