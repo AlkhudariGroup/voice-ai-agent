@@ -137,7 +137,7 @@ class SalParts_Voice_AI {
                 <div class="salparts-voice-ai-overlay"></div>
                 <div class="salparts-voice-ai-frame">
                     <button type="button" class="salparts-voice-ai-close">&times;</button>
-                    <iframe src="<?php echo esc_url($embed_url); ?>" title="Voice AI"></iframe>
+                    <iframe src="<?php echo esc_url($embed_url); ?>" title="Voice AI" allow="microphone"></iframe>
                 </div>
             </div>
         </div>
