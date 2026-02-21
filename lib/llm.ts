@@ -16,20 +16,20 @@ function buildContext(memory: Memory, storeData?: string): string {
   if (Object.keys(memory.userProfile?.preferences ?? {}).length > 0) {
     parts.push(`Preferences: ${JSON.stringify(memory.userProfile!.preferences)}`);
   }
-  if (memory.projects.length > 0) {
+  if (Array.isArray(memory.projects) && memory.projects.length > 0) {
     parts.push(
       "Projects: " +
         memory.projects.map((p) => `${p.name}: ${p.description ?? ""}`).join("; ")
     );
   }
-  if (memory.notes.length > 0) {
+  if (Array.isArray(memory.notes) && memory.notes.length > 0) {
     parts.push(
       "Notes: " + memory.notes.slice(-5).map((n) => n.content).join("; ")
     );
   }
-  if (memory.conversations.length > 0) {
+  if (memory.conversations?.length > 0) {
     const last = memory.conversations[memory.conversations.length - 1];
-    const recent = last.messages.slice(-4);
+    const recent = Array.isArray(last?.messages) ? last.messages.slice(-4) : [];
     parts.push(
       "Recent context: " +
         recent.map((m) => `${m.role}: ${m.content}`).join(" | ")

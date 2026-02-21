@@ -37,6 +37,15 @@ async function fetchStoreData(agentId: string, message: string): Promise<string 
 }
 
 export async function POST(req: NextRequest) {
+  const hasGemini = process.env.USE_GEMINI === "true" && !!process.env.GEMINI_API_KEY;
+  const hasOpenAI = !!process.env.OPENAI_API_KEY;
+  if (!hasGemini && !hasOpenAI) {
+    return NextResponse.json(
+      { error: "API not configured. Add GEMINI_API_KEY or OPENAI_API_KEY in Vercel (Production)." },
+      { status: 503 }
+    );
+  }
+
   try {
     let body: unknown;
     try {
@@ -85,11 +94,16 @@ export async function POST(req: NextRequest) {
     }
 
     const serverMemory = await loadMemoryFromFile();
+    const safeArr = (v: unknown) => (Array.isArray(v) ? v : []);
+    const rawConvos = clientMemory?.conversations ?? serverMemory?.conversations ?? [];
+    const conversations = safeArr(rawConvos).filter(
+      (c: unknown) => c && typeof c === "object" && Array.isArray((c as { messages?: unknown }).messages)
+    );
     const memory: Memory = {
-      userProfile: clientMemory?.userProfile ?? serverMemory.userProfile,
-      projects: clientMemory?.projects ?? serverMemory.projects,
-      notes: clientMemory?.notes ?? serverMemory.notes,
-      conversations: clientMemory?.conversations ?? serverMemory.conversations,
+      userProfile: (clientMemory?.userProfile ?? serverMemory?.userProfile) ?? {},
+      projects: safeArr(clientMemory?.projects ?? serverMemory?.projects),
+      notes: safeArr(clientMemory?.notes ?? serverMemory?.notes),
+      conversations,
     };
 
     const userMessage = imageUrl
@@ -113,8 +127,8 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     const err = e instanceof Error ? e : new Error(String(e));
     console.error("Chat API error:", err.message, err.stack);
-    const body: { error: string; details?: string } = { error: "Internal server error" };
-    if (process.env.NODE_ENV !== "production") body.details = err.message;
-    return NextResponse.json(body, { status: 500 });
+    const msg = err.message || "Internal server error";
+    
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

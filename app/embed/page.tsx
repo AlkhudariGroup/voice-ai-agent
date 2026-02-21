@@ -134,7 +134,7 @@ function EmbedContent() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(res.status === 429 ? (data.error ?? "Usage limit reached") : "API error");
+        throw new Error(data?.error ?? (res.status === 429 ? "Usage limit reached" : `API error: ${res.status}`));
       }
       setMemory(data.updatedMemory);
       saveMemoryToStorage(data.updatedMemory);
