@@ -25,13 +25,8 @@ export function VideoAvatar({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    if (isTalking) {
-      video.play().catch(() => {});
-    } else {
-      video.pause();
-    }
-  }, [isTalking]);
+    video.play().catch(() => {});
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-[#0a0a0a]">
@@ -42,6 +37,7 @@ export function VideoAvatar({
           loop
           muted
           playsInline
+          autoPlay
           onError={() => setVideoError(true)}
           className="fixed inset-0 h-full w-full object-cover"
         />
