@@ -130,7 +130,7 @@ function HomeContent() {
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = true;
-    rec.lang = "ar-SA";
+    rec.lang = "en-US"; // English - use ar-SA for Arabic only
 
     rec.onresult = (e: { results: SpeechRecognitionResultList }) => {
       lastActivityRef.current = Date.now();
